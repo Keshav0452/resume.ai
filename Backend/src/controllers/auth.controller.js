@@ -1,6 +1,7 @@
 const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
-const bcrypt = reuire("bcrypt");
+const bcrypt = require("bcrypt");
+const blacklistTokenModel =  require("../models/blacklist.model");
 
 async function registerUsercontroller(req,res){
     const {username, email, password} = req.body;
@@ -20,16 +21,16 @@ async function registerUsercontroller(req,res){
         })
     }
 
-    const hash = await bcrpyt.hash(password,10);
+    const hash = await bcrypt.hash(password,10);
 
-    const user = new userModel.create({
+    const user = await userModel.create({
         username,
         email,
         password:hash
     })
 
     const token = jwt.sign(
-        {id:user._id,username:user,username},
+        {id:user._id,username:user.username},
         process.env.JWT_SECRET,
         {expiresIn:"1d"}
     )
@@ -54,7 +55,7 @@ async function loginUserController(req,res){
         })
     }
 
-    const isValidPassword = await bcrypt.compare(passwors,user.password);
+    const isValidPassword = await bcrypt.compare(password,user.password);
     if (!isValidPassword){
         return res.status(400).json({
             message:"email or password is incorrect"
@@ -79,8 +80,18 @@ async function loginUserController(req,res){
     })
 }
 
-async function logoutUserController(req,res){
+async function logoutUserController(req,res){  
+    const token = req.cookies.token;
 
+    if(token){
+        await blacklistTokenModel.create({token});
+    }
+
+    res.clearCookie("token");
+
+    res.status(200).json({
+        message:"user successfully logged out."
+    })
 }
 
 async function getMeController(req,res){
