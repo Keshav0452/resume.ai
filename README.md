@@ -154,7 +154,7 @@ The backend server will run at `http://localhost:3000`.
 ### 3. Start the Frontend Client
 Create a `.env` file inside the `Frontend` directory (only needed in production):
 ```env
-VITE_API_URL=https://your-backend-api-domain.com
+REACT_APP_API_URL=https://your-backend-api-domain.com
 ```
 
 Then run:
