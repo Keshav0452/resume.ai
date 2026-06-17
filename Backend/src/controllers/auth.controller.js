@@ -67,9 +67,11 @@ async function loginUserController(req,res){
             {expiresIn:"1d"}
         )
 
+        const isProd = process.env.NODE_ENV === "production";
         res.cookie("token", token, {
             httpOnly: true,
-            sameSite: "lax",
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax",
             maxAge: 24 * 60 * 60 * 1000 // 1 day
         })
 
@@ -95,7 +97,12 @@ async function logoutUserController(req,res){
             await blacklistTokenModel.create({token});
         }
 
-        res.clearCookie("token");
+        const isProd = process.env.NODE_ENV === "production";
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax"
+        });
 
         res.status(200).json({
             message:"user successfully logged out."
