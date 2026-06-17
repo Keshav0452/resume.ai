@@ -137,21 +137,31 @@ PORT=3000
 MONGODB_URL=your_mongodb_connection_string
 JWT_SECRET=your_jwt_signature_secret_string
 GOOGLE_GENAI_API_KEY=your_gemini_api_key
+
+# For production deployment:
+NODE_ENV=production
+FRONTEND_URL=https://your-frontend-domain.com
 ```
 
 ### 2. Start the Backend API
 ```bash
 cd Backend
 npm install
-npm run dev
+npm run dev # or 'npm start' in production
 ```
 The backend server will run at `http://localhost:3000`.
 
 ### 3. Start the Frontend Client
-Open a separate terminal window:
+Create a `.env` file inside the `Frontend` directory (only needed in production):
+```env
+VITE_API_URL=https://your-backend-api-domain.com
+```
+
+Then run:
 ```bash
 cd Frontend
 npm install
-npm run dev
+npm run dev # or 'npm run build' for production static assets
 ```
 The React dev server will spin up at `http://localhost:5173`.
+
